@@ -28,6 +28,14 @@ object Prod extends Controller {
     
   }
 
+  def details(ean: Long) = Action{
+    var product= Database.forURL("jdbc:mysql://localhost:3306/inventory", driver = "scala.slick.driver.MySQLDriver",user="root",password="root") withSession {
+       implicit session =>
+      //(for(product <- Products) yield  product.ean).list
+       Products.filter(p=>p.ean===ean).firstOption
+    }
+    Ok(Json.toJson(product))
+  }
   
 }
 
