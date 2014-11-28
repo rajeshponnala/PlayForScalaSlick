@@ -21,4 +21,3 @@ object Application extends Controller {
   Ok(views.html.index())
   }
  }
-}
