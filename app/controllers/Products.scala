@@ -17,8 +17,10 @@ object Prod extends Controller {
     "description"->p.description
   )
 }
+
+
    
-   def list = Action{
+ def list = Action{
   	 var data= Database.forURL("jdbc:mysql://localhost:3306/inventory", driver = "scala.slick.driver.MySQLDriver",user="root",password="root") withSession {
        implicit session =>
       //(for(product <- Products) yield  product.ean).list
