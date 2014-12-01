@@ -6,6 +6,7 @@ jQuery ($) ->
           $.get productListUrl, (products) ->
             $.each products, (index, eanCode) ->
              row=$('<tr/>').append($('<td/>').text(eanCode.ean)) 
+             row.attr 'contenteditable',true
              $table.append row 
              loadProductDetails row
 
