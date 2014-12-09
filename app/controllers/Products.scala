@@ -18,10 +18,16 @@ object Prod extends Controller {
   )
 }
 
+implicit val productReads: Reads[ProductsRow] = (
+(JsPath \ "ean").read[Long] and
+(JsPath \ "name").read[String] and
+(JsPath \ "description").read[String]
+)(ProductsRow.apply _)
+
 
    
  def list = Action{
-  	 var data= Database.forURL("jdbc:mysql://localhost:3306/inventory", driver = "scala.slick.driver.MySQLDriver",user="root",password="root") withSession {
+  	 var data= Database.forURL("jdbc:mysql://localhost:3307/inventory", driver = "scala.slick.driver.MySQLDriver",user="root",password="root") withSession {
        implicit session =>
       //(for(product <- Products) yield  product.ean).list
        Products.list
@@ -39,6 +45,17 @@ object Prod extends Controller {
     product.map{p=> Ok(Json.toJson(p))}.getOrElse(NotFound)
     
   }
+
+  def save(ean: Long)=Action(parse.json){ request=>
+    val productJson=request.body
+    val product=productJson.as[ProductsRow]
+     var data= Database.forURL("jdbc:mysql://localhost:3306/inventory", driver = "scala.slick.driver.MySQLDriver",user="root",password="root") withSession {
+       implicit session =>
+      //(for(product <- Products) yield  product.ean).list
+       Products.filter(p=>p.ean===ean).update(product)
+    }
+   if(data==1) Ok("Saved") else BadRequest("Product not found")
+ }
   
 }
 
