@@ -21,3 +21,28 @@ jQuery ($) ->
               tableRow.append $('<td/>').text(product.description)
         
         loadProductTable()
+
+        saveRow=($row)->
+
+          [ean, name, description] = $row.children().map -> $(this).text()
+          product=
+           ean: parseInt(ean)
+           name: name
+           description: description
+
+          jqxhr = $.ajax
+            type: "PUT"
+            url: productDetailsUrl(ean)
+            contentType: "application/json"
+            data: JSON.stringify product
+          jqxhr.done (response) ->
+            $label = $('<span/>').addClass('label label-success')
+            $row.children().last().append $label.text(response)
+            $label.delay(3000).fadeOut()
+          jqxhr.fail (data) ->
+            $label = $('<span/>').addClass('label label-important')
+            message = data.responseText || data.statusText
+            $row.children().last().append $label.text(message)
+
+        $table.on 'focusout', 'tr', () ->
+         saveRow $(this)
